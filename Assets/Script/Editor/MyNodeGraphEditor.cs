@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -8,45 +8,36 @@ using UnityEngine.UIElements;
 
 public class MyNodeGraphEditor : EditorWindow
 {
-    private GraphView graphView;
+    private MyGraphView graphView;
+    private VisualElement contentContainer;
 
     [MenuItem("Window/Node Graph Editor")]
     public static void OpenGraphEditor()
     {
-        MyNodeGraphEditor window = GetWindow<MyNodeGraphEditor>();
+        var window = GetWindow<MyNodeGraphEditor>();
         window.titleContent = new GUIContent("Node Graph Editor");
     }
 
     public void CreateGUI()
     {
-        ConstructGraphView();
-        CreateToolbar();
+        CreateToolbar();         // ìƒë‹¨ Apply ë²„íŠ¼
+        ConstructGraphView();    // graphView ìƒì„±
+        AddNodePalette();        // ì¢Œì¸¡ íŒ”ë ˆíŠ¸ + ìš°ì¸¡ ê·¸ë˜í”„
     }
 
     private void CreateToolbar()
     {
-        // Åø¹Ù ÄÁÅ×ÀÌ³Ê »ı¼º
         Toolbar toolbar = new Toolbar();
+        toolbar.style.height = 30;
+        toolbar.style.flexShrink = 0;
 
-        // ¹öÆ° »ı¼º ¹× ÀÌº¥Æ® ¹ÙÀÎµù
         Button applyButton = new Button(ApplyChanges)
         {
             text = "Apply"
         };
         toolbar.Add(applyButton);
 
-        // Åø¹Ù¸¦ ÃÖ»ó´Ü¿¡ Ãß°¡
         rootVisualElement.Add(toolbar);
-    }
-
-    private void OnEnable()
-    {
-        ConstructGraphView();
-    }
-
-    private void OnDisable()
-    {
-        rootVisualElement.Remove(graphView);
     }
 
     private void ConstructGraphView()
@@ -55,26 +46,75 @@ public class MyNodeGraphEditor : EditorWindow
         {
             name = "My Node Graph"
         };
-        graphView.StretchToParentSize();
-        rootVisualElement.Add(graphView);
+
+        graphView.style.flexGrow = 1;
+        graphView.style.position = Position.Relative; // âœ… ì´ê±° ê¼­ ë„£ê¸°!
     }
 
-    // Apply ¹öÆ°ÀÌ ´­·ÈÀ» ¶§ ½ÇÇàÇÒ ·ÎÁ÷
+
+    private void AddNodePalette()
+    {
+        // ì™¼ìª½ íŒ”ë ˆíŠ¸
+        VisualElement sidebar = new VisualElement();
+        sidebar.style.width = 100;
+        sidebar.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f); // ë” ì˜ ë³´ì´ê²Œ
+        sidebar.style.flexDirection = FlexDirection.Column;
+        sidebar.style.paddingTop = 10;
+        sidebar.style.marginRight = 2;
+
+        // Float ë²„íŠ¼
+        Label floatLabel = new Label("Float");
+        floatLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
+        floatLabel.style.height = 30;
+        //floatLabel.style.backgroundColor = Color.red; // í…ŒìŠ¤íŠ¸ìš© ëˆˆì— í™• ë„ê²Œ
+        floatLabel.style.color = Color.white;
+        floatLabel.style.marginBottom = 5;
+
+        floatLabel.RegisterCallback<MouseDownEvent>((evt) =>
+        {
+            Debug.Log("Float ë²„íŠ¼ í´ë¦­ë¨ (ë“œë˜ê·¸ ì¤€ë¹„)");
+            DragAndDrop.PrepareStartDrag();
+            DragAndDrop.SetGenericData("ParameterType", "Float");
+            DragAndDrop.StartDrag("FloatParameter");
+        });
+
+        sidebar.Add(floatLabel);
+
+        // ì „ì²´ content ë ˆì´ì•„ì›ƒ
+        contentContainer = new VisualElement();
+        contentContainer.style.flexDirection = FlexDirection.Row;
+        contentContainer.style.flexGrow = 1;
+
+        graphView.style.flexGrow = 1;
+
+        contentContainer.Add(sidebar);
+        contentContainer.Add(graphView);
+
+        rootVisualElement.Add(contentContainer);
+    }
+
+
+    private void OnDisable()
+    {
+        rootVisualElement.Clear(); // ë˜ëŠ” rootVisualElement.Remove(contentContainer);
+    }
+
+    // Apply ë²„íŠ¼ì´ ëˆŒë ¸ì„ ë•Œ ì‹¤í–‰í•  ë¡œì§
     private void ApplyChanges()
     {
-        Debug.Log("Apply ¹öÆ° Å¬¸¯ - ³ëµå¿¡ º¯°æ »çÇ×À» Àû¿ëÇÕ´Ï´Ù.");
-        // 1. GraphView ³»ÀÇ ¸ğµç MyNode ¸®½ºÆ® °¡Á®¿À±â
+        Debug.Log("Apply ë²„íŠ¼ í´ë¦­ - ë…¸ë“œì— ë³€ê²½ ì‚¬í•­ì„ ì ìš©í•©ë‹ˆë‹¤.");
+        // 1. GraphView ë‚´ì˜ ëª¨ë“  MyNode ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸°
         var allNodes = graphView.nodes.OfType<MyNode>().ToList();
 
-        // 2. °¢ ³ëµåÀÇ ÀÇÁ¸¼º Ä«¿îÆ®(ÀÔ·Â ¿¬°á ¼ö)¸¦ °è»ê
+        // 2. ê° ë…¸ë“œì˜ ì˜ì¡´ì„± ì¹´ìš´íŠ¸(ì…ë ¥ ì—°ê²° ìˆ˜)ë¥¼ ê³„ì‚°
         Dictionary<MyNode, int> dependencyCount = new Dictionary<MyNode, int>();
         foreach (MyNode node in allNodes)
         {
-            // °¢ ³ëµåÀÇ inputPort¿¡ ¿¬°áµÈ ¿§Áö ¼ö°¡ ±× ³ëµåÀÇ ÀÇÁ¸¼º ¼öÀÔ´Ï´Ù.
+            // ê° ë…¸ë“œì˜ inputPortì— ì—°ê²°ëœ ì—£ì§€ ìˆ˜ê°€ ê·¸ ë…¸ë“œì˜ ì˜ì¡´ì„± ìˆ˜ì…ë‹ˆë‹¤.
             dependencyCount[node] = node.inputPort.connections.Count();
         }
 
-        // 3. ÀÇÁ¸¼ºÀÌ ¾ø´Â ³ëµå(Áï, ÀÔ·Â ¿¬°áÀÌ ¾ø´Â ³ëµå)¸¦ ½ÇÇà Å¥¿¡ Ãß°¡
+        // 3. ì˜ì¡´ì„±ì´ ì—†ëŠ” ë…¸ë“œ(ì¦‰, ì…ë ¥ ì—°ê²°ì´ ì—†ëŠ” ë…¸ë“œ)ë¥¼ ì‹¤í–‰ íì— ì¶”ê°€
         Queue<MyNode> readyNodes = new Queue<MyNode>();
         foreach (var kvp in dependencyCount)
         {
@@ -84,23 +124,23 @@ public class MyNodeGraphEditor : EditorWindow
             }
         }
 
-        // 4. À§»ó Á¤·Ä ¹æ½ÄÀ¸·Î Æò°¡ ¼ø¼­¸¦ °è»êÇÏ¸ç ³ëµå ½ÇÇà
+        // 4. ìœ„ìƒ ì •ë ¬ ë°©ì‹ìœ¼ë¡œ í‰ê°€ ìˆœì„œë¥¼ ê³„ì‚°í•˜ë©° ë…¸ë“œ ì‹¤í–‰
         while (readyNodes.Count > 0)
         {
             MyNode currentNode = readyNodes.Dequeue();
 
-            // ÇöÀç ³ëµå ½ÇÇà
+            // í˜„ì¬ ë…¸ë“œ ì‹¤í–‰
             currentNode.Evaluate();
 
-            // ÇöÀç ³ëµåÀÇ Ãâ·Â Æ÷Æ® ¿¬°áÀ» ÅëÇØ ¿¬°áµÈ ¸ğµç ÈÄ¼Ó ³ëµå¸¦ Ã£¾Æ ÀÇÁ¸¼º Ä«¿îÆ®¸¦ °¨¼Ò
+            // í˜„ì¬ ë…¸ë“œì˜ ì¶œë ¥ í¬íŠ¸ ì—°ê²°ì„ í†µí•´ ì—°ê²°ëœ ëª¨ë“  í›„ì† ë…¸ë“œë¥¼ ì°¾ì•„ ì˜ì¡´ì„± ì¹´ìš´íŠ¸ë¥¼ ê°ì†Œ
             foreach (Edge edge in currentNode.outputPort.connections)
             {
-                // edge.inputÀº ¿¬°áµÈ ÀÔ·Â Æ÷Æ®ÀÌ¹Ç·Î, ÇØ´ç Æ÷Æ®°¡ ¼ÒÀ¯ÇÑ ³ëµå°¡ ÈÄ¼Ó ³ëµåÀÔ´Ï´Ù.
+                // edge.inputì€ ì—°ê²°ëœ ì…ë ¥ í¬íŠ¸ì´ë¯€ë¡œ, í•´ë‹¹ í¬íŠ¸ê°€ ì†Œìœ í•œ ë…¸ë“œê°€ í›„ì† ë…¸ë“œì…ë‹ˆë‹¤.
                 MyNode targetNode = edge.input.node as MyNode;
                 if (targetNode != null)
                 {
                     dependencyCount[targetNode]--;
-                    // ÀÇÁ¸¼ºÀÌ 0ÀÌ µÇ¸é ½ÇÇà °¡´ÉÇÑ »óÅÂÀÌ¹Ç·Î Å¥¿¡ Ãß°¡ÇÕ´Ï´Ù.
+                    // ì˜ì¡´ì„±ì´ 0ì´ ë˜ë©´ ì‹¤í–‰ ê°€ëŠ¥í•œ ìƒíƒœì´ë¯€ë¡œ íì— ì¶”ê°€í•©ë‹ˆë‹¤.
                     if (dependencyCount[targetNode] == 0)
                     {
                         readyNodes.Enqueue(targetNode);
