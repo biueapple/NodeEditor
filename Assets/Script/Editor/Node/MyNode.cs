@@ -1,88 +1,58 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
+using System.Collections.Generic;
+using System;
 
-public abstract class MyNode : Node
+namespace NodeEditor
 {
-    public Port inputPort;
-    public Port outputPort;
-
-    public MyNode()
+    //노드의 기본이 되는 노드로 일단 실행기능만 남아있음
+    public abstract class MyNode : UnityEditor.Experimental.GraphView.Node
     {
-        title = "My Node";
-        // 기본 포트 추가 (입력 포트와 출력 포트)
-        inputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
-        inputPort.portName = "Input";
-        // Edge 연결을 위한 매니퓰레이터 추가 (IEdgeConnectorListener를 구현한 리스너 필요)
-        inputPort.AddManipulator(new MyEdgeConnector(new MyEdgeConnectorListener()));
-        inputContainer.Add(inputPort);
+        //실행
+        public abstract void Excute();
 
-        outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-        outputPort.portName = "Output";
-        outputContainer.Add(outputPort);
-
-        RefreshExpandedState();
-        RefreshPorts();
-
-        // titleContainer에서 더블클릭 이벤트 등록
-        titleContainer.RegisterCallback<MouseDownEvent>(OnTitleDoubleClick);
-    }
-
-    private void OnTitleDoubleClick(MouseDownEvent evt)
-    {
-        // 클릭 횟수가 2 이상이면 더블클릭으로 판단
-        if (evt.clickCount < 2)
-            return;
-
-        // 이미 TextField가 있다면 중복 생성 방지
-        if (titleContainer.Q<TextField>() != null)
-            return;
-
-        // 기존 타이틀(라벨) 감추기: title은 그대로 유지하거나 필요에 따라 제거합니다.
-        // 기존 titleContainer의 자식 요소들 제거 (간단하게 초기화)
-        titleContainer.Clear();
-
-        // TextField 생성하여 타이틀 수정 모드로 전환
-        TextField renameField = new TextField();
-        renameField.value = title;
-        renameField.style.unityTextAlign = TextAnchor.MiddleCenter;
-        // TextField 크기와 스타일은 필요한 대로 조절하세요.
-        titleContainer.Add(renameField);
-
-        // 포커스를 텍스트 필드에 주고, 전체 텍스트 선택
-        renameField.Focus();
-        renameField.SelectAll();
-
-        // 입력 완료(포커스 아웃 또는 엔터)를 감지하여 새 이름 적용
-        renameField.RegisterCallback<FocusOutEvent>(evtFocusOut =>
+        //뭔가 당하면 (삭제 복사 복제) 호출되는듯
+        public override void CollectElements(HashSet<GraphElement> collectedElementSet, Func<GraphElement, bool> conditionFunc)
         {
-            ApplyRename(renameField);
-        });
+            base.CollectElements(collectedElementSet, conditionFunc);
+            Debug.Log("CollectElements");
+        }
 
-        renameField.RegisterCallback<KeyDownEvent>(evtKey =>
+        //우클릭하면 호출되는듯 근데 우클릭해도 배경을 우클릭한거로 나와서
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
-            if (evtKey.keyCode == KeyCode.Return || evtKey.keyCode == KeyCode.KeypadEnter)
+            //기본 우클릭 메뉴 보이지 않게
+            //base.BuildContextualMenu(evt);
+            //노드 삭제
+            evt.menu.AppendAction("Delete", action => DeleteNode());
+            //더이상 이벤트가 상위로 전파되지 않도록 이게 없다면 graphview의 우클릭매뉴도 같이 보임
+            evt.StopPropagation();
+        }
+
+        private void DeleteNode()
+        {
+            //자신의 부모중에 GraphView를 찾음 (가장 가까운)
+            if (GetFirstAncestorOfType<GraphView>() is GraphView graphView)
             {
-                ApplyRename(renameField);
+                //부모에게 자신을 삭제해달라고 요청
+                graphView.RemoveElement(this);
             }
-        });
+        }
+
+        //선택 후 2번 호출되는 경우 있음
+        public override void OnSelected()
+        {
+            base.OnSelected();
+            Debug.Log("OnSelected");
+        }
+
+        //선택 시 가장 빨리 호출되고 두번 호출되는 일이 없음
+        public override void Select(VisualElement selectionContainer, bool additive)
+        {
+            base.Select(selectionContainer, additive);
+            Debug.Log("Select");
+        }
+
     }
-
-    private void ApplyRename(TextField renameField)
-    {
-        // 새 이름 설정
-        title = renameField.value;
-
-        // 타이틀 컨테이너 초기화 후 기본 레이블 형태로 저장
-        titleContainer.Clear();
-
-        // 기본적으로 Node 클래스는 title을 그리기 위한 내부 메커니즘을 다시 재생성하지 않으므로,
-        // 직접 Label을 추가하거나, 혹은 titleContainer에 TextField가 유지되도록 할 수 있습니다.
-        // 여기서는 간단히 Label로 교체하는 예제를 보여드리겠습니다.
-        Label titleLabel = new Label(title);
-        titleLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
-        titleContainer.Add(titleLabel);
-    }
-
-    public abstract void Evaluate();
 }
