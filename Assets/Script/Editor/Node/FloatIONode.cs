@@ -10,7 +10,7 @@ namespace NodeEditor
         public Port input;
         public Port output;
 
-        public FloatIONode()
+        public FloatIONode() : base()
         {
             title = "Float IO Node";
 

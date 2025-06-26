@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
@@ -6,53 +6,115 @@ using System;
 
 namespace NodeEditor
 {
-    //³ëµåÀÇ ±âº»ÀÌ µÇ´Â ³ëµå·Î ÀÏ´Ü ½ÇÇà±â´É¸¸ ³²¾ÆÀÖÀ½
+    //ë…¸ë“œì˜ ê¸°ë³¸ì´ ë˜ëŠ” ë…¸ë“œë¡œ ì¼ë‹¨ ì‹¤í–‰ê¸°ëŠ¥ë§Œ ë‚¨ì•„ìˆìŒ
     public abstract class MyNode : UnityEditor.Experimental.GraphView.Node
     {
-        //½ÇÇà
+        public MyNode()
+        {
+            titleContainer.RegisterCallback<MouseDownEvent>(OnTitleDoubleClick);
+        }
+
+        //ì‹¤í–‰
         public abstract void Excute();
 
-        //¹º°¡ ´çÇÏ¸é (»èÁ¦ º¹»ç º¹Á¦) È£ÃâµÇ´Âµí
+        //ë­”ê°€ ë‹¹í•˜ë©´ (ì‚­ì œ ë³µì‚¬ ë³µì œ) í˜¸ì¶œë˜ëŠ”ë“¯
         public override void CollectElements(HashSet<GraphElement> collectedElementSet, Func<GraphElement, bool> conditionFunc)
         {
             base.CollectElements(collectedElementSet, conditionFunc);
-            Debug.Log("CollectElements");
         }
 
-        //¿ìÅ¬¸¯ÇÏ¸é È£ÃâµÇ´Âµí ±Ùµ¥ ¿ìÅ¬¸¯ÇØµµ ¹è°æÀ» ¿ìÅ¬¸¯ÇÑ°Å·Î ³ª¿Í¼­
+        //ìš°í´ë¦­í•˜ë©´ í˜¸ì¶œ
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
-            //±âº» ¿ìÅ¬¸¯ ¸Ş´º º¸ÀÌÁö ¾Ê°Ô
+            //ê¸°ë³¸ ìš°í´ë¦­ ë©”ë‰´ ë³´ì´ì§€ ì•Šê²Œ
             //base.BuildContextualMenu(evt);
-            //³ëµå »èÁ¦
+            //ë…¸ë“œ ì‚­ì œ
             evt.menu.AppendAction("Delete", action => DeleteNode());
-            //´õÀÌ»ó ÀÌº¥Æ®°¡ »óÀ§·Î ÀüÆÄµÇÁö ¾Êµµ·Ï ÀÌ°Ô ¾ø´Ù¸é graphviewÀÇ ¿ìÅ¬¸¯¸Å´ºµµ °°ÀÌ º¸ÀÓ
+            //ë”ì´ìƒ ì´ë²¤íŠ¸ê°€ ìƒìœ„ë¡œ ì „íŒŒë˜ì§€ ì•Šë„ë¡ ì´ê²Œ ì—†ë‹¤ë©´ graphviewì˜ ìš°í´ë¦­ë§¤ë‰´ë„ ê°™ì´ ë³´ì„
             evt.StopPropagation();
         }
 
         private void DeleteNode()
         {
-            //ÀÚ½ÅÀÇ ºÎ¸ğÁß¿¡ GraphView¸¦ Ã£À½ (°¡Àå °¡±î¿î)
+            //ìì‹ ì˜ ë¶€ëª¨ì¤‘ì— GraphViewë¥¼ ì°¾ìŒ (ê°€ì¥ ê°€ê¹Œìš´)
             if (GetFirstAncestorOfType<GraphView>() is GraphView graphView)
             {
-                //ºÎ¸ğ¿¡°Ô ÀÚ½ÅÀ» »èÁ¦ÇØ´Ş¶ó°í ¿äÃ»
+                //ë¶€ëª¨ì—ê²Œ ìì‹ ì„ ì‚­ì œí•´ë‹¬ë¼ê³  ìš”ì²­
                 graphView.RemoveElement(this);
             }
         }
 
-        //¼±ÅÃ ÈÄ 2¹ø È£ÃâµÇ´Â °æ¿ì ÀÖÀ½
+        //ì„ íƒ í›„ 2ë²ˆ í˜¸ì¶œë˜ëŠ” ê²½ìš° ìˆìŒ
         public override void OnSelected()
         {
             base.OnSelected();
-            Debug.Log("OnSelected");
         }
 
-        //¼±ÅÃ ½Ã °¡Àå »¡¸® È£ÃâµÇ°í µÎ¹ø È£ÃâµÇ´Â ÀÏÀÌ ¾øÀ½
+        //ì„ íƒ í•´ì œë ë•Œ í˜¸ì¶œ ê·¼ë° mouse up í•´ë„ í˜¸ì¶œë¨
+        public override void OnUnselected()
+        {
+            base.OnUnselected();
+        }
+
+        //ì„ íƒ ì‹œ ê°€ì¥ ë¹¨ë¦¬ í˜¸ì¶œë˜ê³  ë‘ë²ˆ í˜¸ì¶œë˜ëŠ” ì¼ì´ ì—†ìŒ
         public override void Select(VisualElement selectionContainer, bool additive)
         {
             base.Select(selectionContainer, additive);
-            Debug.Log("Select");
         }
 
+        private VisualElement container;
+        private void OnTitleDoubleClick(MouseDownEvent mouseDownEvent)
+        {
+            //ë”ë¸”í´ë¦­ì´ ì•„ë‹˜ (í•œë²ˆë§Œ í´ë¦­í•¨)
+            if (mouseDownEvent.clickCount < 2)
+                return;
+
+            //ì´ë¯¸ í¸ì§‘ ì¤‘ì¸ì§€ í™•ì¸
+            if (titleContainer.Q<TextField>() != null)
+                return;
+
+            //ê¸°ì¡´ ì˜ì—­ ì§€ìš°ê¸°
+            Debug.Log(titleContainer.ElementAt(0));
+            //titleContainer.ElementAt(0);
+            titleContainer.Clear();
+
+            //ìƒˆë¡œìš´ ì´ë¦„ì„ ì •í•  ì…ë ¥ì°½ ë§Œë“¤ê¸°
+            TextField rename = new();
+            //ì¼ë‹¨ ì§€ê¸ˆ ìˆë˜ ì´ë¦„ ë„£ì–´ë‘ê¸°
+            rename.value = title;
+            //ì¤‘ì•™ ì •ë ¬
+            rename.style.unityTextAlign = TextAnchor.MiddleCenter;
+            //ì…ë ¥ì°½ ë„£ê¸°
+            titleContainer.Add(rename);
+
+            //ì…ë ¥ì°½ì— í¬ì»¤ìŠ¤
+            rename.Focus();
+            //ì…ë ¥ë˜ìˆëŠ” í…ìŠ¤íŠ¸ ì „ë¶€ ì„ íƒ
+            rename.SelectAll();
+
+            //í¬ì»¤ìŠ¤ë¥¼ ìƒì—ˆì„ë•Œ ì½œë°±
+            rename.RegisterCallback<FocusOutEvent>(evtFocus => { ApplyRename(rename); });
+
+            //enterë¥¼ ëˆ„ë¥´ë©´ ì½œë°±
+            rename.RegisterCallback<KeyDownEvent>(evtKey => { if (evtKey.keyCode == KeyCode.Return || evtKey.keyCode == KeyCode.KeypadEnter) ApplyRename(rename); });
+        }
+
+        //ì´ë¦„ ì ìš©
+        private void ApplyRename(TextField textField)
+        {
+            //ë„£ì„ titleì˜ ê°’ì„ ì…ë ¥ì°½ì˜ ê°’ìœ¼ë¡œ ë³€ê²½
+            title = textField.value;
+
+            //ë„£ì—ˆë˜ ì…ë ¥ì°½ ì—†ì• ê¸°
+            titleContainer.Clear();
+
+            //ë¼ë²¨ì„ ë§Œë“¤ì–´ì„œ titleì˜ ê°’ì„ ë„£ê¸°
+            Label titleLabel = new Label(title);
+            //ì¤‘ì•™ ì •ë ¬
+            titleLabel.name = "title-label";
+
+            //ë¼ë²¨ ë„£ì–´ì„œ ì´ë¦„ í‘œì‹œí•˜ê¸°
+            titleContainer.Add(titleLabel);
+        }
     }
 }
