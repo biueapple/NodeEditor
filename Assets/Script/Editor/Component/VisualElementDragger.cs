@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 
 namespace NodeEditor
 {
+    //VisualElement 자체를 움직일때 사용하는 클래스
     public class VisualElementDragger : MouseManipulator
     {
         //클릭한 위치
@@ -10,12 +11,12 @@ namespace NodeEditor
         //드래그 중인지
         private bool isDragging;
 
-        public VisualElementDragger()
+        public VisualElementDragger(MouseButton mouseButton)
         {
-            activators.Add(new ManipulatorActivationFilter { button = MouseButton.LeftMouse });
+            activators.Add(new ManipulatorActivationFilter { button = mouseButton });
         }
 
-        //생성 등록인가
+        //생성 등록
         protected override void RegisterCallbacksOnTarget()
         {
             target.RegisterCallback<MouseDownEvent>(OnMouseDown);
@@ -23,7 +24,7 @@ namespace NodeEditor
             target.RegisterCallback<MouseUpEvent>(OnMouseUp);
         }
 
-        //생성 해제 등록 해제같음
+        //등록 해제
         protected override void UnregisterCallbacksFromTarget()
         {
             target.UnregisterCallback<MouseDownEvent>(OnMouseDown);

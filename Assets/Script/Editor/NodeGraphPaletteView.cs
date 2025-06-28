@@ -7,9 +7,11 @@ namespace NodeEditor
 {
     public class NodeGraphPaletteView : GraphView
     {
-        public NodeGraphPaletteView()
+        private NodeGraphView nodeGraphView;
+        public NodeGraphPaletteView(NodeGraphView nodeGraphView)
         {
-            //SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
+            this.nodeGraphView = nodeGraphView;
+
             style.position = Position.Absolute;
             style.left = 20;
             style.top = 20;
@@ -23,7 +25,47 @@ namespace NodeEditor
             style.paddingLeft = 10;
             style.paddingTop = 10;
 
-            this.AddManipulator(new VisualElementDragger());
+            VisualElement topElement = new VisualElement();
+            topElement.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f);
+            //자신의 크기를 자동으로 설정해주는거 (높이는 수동으로 정하고 좌우는 자동으로 맞춰주기)
+            topElement.style.alignSelf = Align.Stretch;
+            topElement.style.height = 50;
+            //왼쪽 과 위 패딩 없애기
+            topElement.style.marginLeft = -10;
+            topElement.style.marginRight = 10;
+            topElement.style.marginTop = -10;
+            topElement.style.marginBottom = 10;
+
+            //라벨 추가
+            Label label = new Label("Node Graph");
+            //텍스트 정렬
+            label.style.unityTextAlign = TextAnchor.UpperLeft;
+            label.style.marginTop = 10;
+            label.style.marginLeft = 10;
+
+            Button plus = new Button(() => AddParam()) { text = "+" };
+            plus.style.alignSelf = Align.FlexEnd;
+            plus.style.width = 20;
+            plus.style.height = 20;
+
+            topElement.Add(label);
+            topElement.Add(plus);
+
+            Add(topElement);
+
+            //마우스 클릭으로 드래그하여 움직이도록 하는 기능 추가
+            this.AddManipulator(new VisualElementDragger(MouseButton.LeftMouse));
+        }
+
+        //일단 테스트 용도로 floatIONode를 화면 중앙에 생성
+        private void AddParam()
+        {
+            Vector2 viewCenter = nodeGraphView.layout.size / 2;
+            //노드 크기를 계산해서 더 중앙으로
+            //Vector2 nodeSize = new Vector2(200, 150);
+            //Vector2 nodePosition = viewCenter - nodeSize / 2;
+
+            nodeGraphView.CreateFloatIONode(viewCenter);
         }
     }
 }

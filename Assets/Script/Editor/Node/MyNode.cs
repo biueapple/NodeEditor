@@ -62,7 +62,6 @@ namespace NodeEditor
             base.Select(selectionContainer, additive);
         }
 
-        private VisualElement container;
         private void OnTitleDoubleClick(MouseDownEvent mouseDownEvent)
         {
             //더블클릭이 아님 (한번만 클릭함)
@@ -74,8 +73,6 @@ namespace NodeEditor
                 return;
 
             //기존 영역 지우기
-            Debug.Log(titleContainer.ElementAt(0));
-            //titleContainer.ElementAt(0);
             titleContainer.Clear();
 
             //새로운 이름을 정할 입력창 만들기

@@ -9,21 +9,29 @@ namespace NodeEditor
     //에디터 윈도우를 꾸미는 요소중에 하나
     public class NodeGraphView : GraphView
     {
+        private GridBackground gridBackground;
+        public GridBackground GridBackground => gridBackground;
+
         public NodeGraphView()
         {
+            //줌 기능
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 
             //배경
-            GridBackground gridBackground = new ();
+            gridBackground = new ();
+
             //배경의 색깔을 정함
             gridBackground.style.backgroundColor = Color.black;
 
             //배경을 추가함
             Insert(0, gridBackground);
 
-            //기능 추가 (드래그로 영역을 선택)
+            //기능 추가 (노드 선택) 유니티 기능
             this.AddManipulator(new SelectionDragger());
+            //기능 추가 (드래그로 영역을 선택) 유니티 기능
             this.AddManipulator(new RectangleSelector());
+            //기능 추가 (마우스 중간으로 윈도우 이동) 커스텀 기능
+            this.AddManipulator(new VisualElementContentViewDragger(this, MouseButton.MiddleMouse));
         }
 
         //우클릭 누르면 나오는 메뉴를 정하는 메소드
@@ -68,7 +76,7 @@ namespace NodeEditor
         }
 
         //floatIONode를 자신의 요소로 추가
-        private void CreateFloatIONode(Vector2 position)
+        public void CreateFloatIONode(Vector2 position)
         {
             FloatIONode floatIONode = new ();
             floatIONode.SetPosition(new Rect(position, new Vector2(200, 150)));

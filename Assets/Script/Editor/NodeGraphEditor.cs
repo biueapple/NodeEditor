@@ -46,7 +46,7 @@ namespace NodeEditor
             root.Add(nodeGraphView);
 
             // 팔레트 패널 (Shader Graph 스타일)
-            NodeGraphPaletteView palette = new NodeGraphPaletteView();
+            NodeGraphPaletteView palette = new NodeGraphPaletteView(nodeGraphView);
             root.Add(palette);
 
             //ui트리 최상단 여기에 등록된 순서로 에디터 창에 그려짐
