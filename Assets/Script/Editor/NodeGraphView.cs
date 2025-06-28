@@ -22,6 +22,7 @@ namespace NodeEditor
             Insert(0, gridBackground);
 
             //기능 추가 (드래그로 영역을 선택)
+            this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
         }
 

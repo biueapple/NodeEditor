@@ -33,7 +33,7 @@ namespace NodeEditor
 
         public override void Excute()
         {
-
+            Debug.Log("Excute");
         }
     }
 }
