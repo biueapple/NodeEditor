@@ -32,9 +32,7 @@ namespace NodeEditor
             topElement.style.height = 50;
             //왼쪽 과 위 패딩 없애기
             topElement.style.marginLeft = -10;
-            topElement.style.marginRight = 10;
             topElement.style.marginTop = -10;
-            topElement.style.marginBottom = 10;
 
             //라벨 추가
             Label label = new Label("Node Graph");
@@ -65,7 +63,7 @@ namespace NodeEditor
             //Vector2 nodeSize = new Vector2(200, 150);
             //Vector2 nodePosition = viewCenter - nodeSize / 2;
 
-            nodeGraphView.CreateFloatIONode(viewCenter);
+            nodeGraphView.CreateFloatONode(viewCenter);
         }
     }
 }

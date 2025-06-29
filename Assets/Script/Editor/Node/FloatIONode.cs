@@ -7,8 +7,8 @@ namespace NodeEditor
     //Input = float, output = float 인 노드
     public class FloatIONode : MyNode
     {
-        public Port input;
-        public Port output;
+        private Port input;
+        private Port output;
 
         public FloatIONode() : base()
         {

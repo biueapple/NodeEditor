@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,6 +13,9 @@ namespace NodeEditor
         private GridBackground gridBackground;
         public GridBackground GridBackground => gridBackground;
 
+        [SerializeField]
+        public NodeGraphData graphData;
+
         public NodeGraphView()
         {
             //줌 기능
@@ -19,6 +23,7 @@ namespace NodeEditor
 
             //배경
             gridBackground = new ();
+            gridBackground.name = "gridBackground";
 
             //배경의 색깔을 정함
             gridBackground.style.backgroundColor = Color.black;
@@ -26,12 +31,22 @@ namespace NodeEditor
             //배경을 추가함
             Insert(0, gridBackground);
 
+            CreateToolbar();
+
             //기능 추가 (노드 선택) 유니티 기능
             this.AddManipulator(new SelectionDragger());
             //기능 추가 (드래그로 영역을 선택) 유니티 기능
             this.AddManipulator(new RectangleSelector());
             //기능 추가 (마우스 중간으로 윈도우 이동) 커스텀 기능
             this.AddManipulator(new VisualElementContentViewDragger(this, MouseButton.MiddleMouse));
+
+            graphData = AssetDatabase.LoadAssetAtPath<NodeGraphData>("Assets/Script/Editor/NodeGraphData/Node Graph Data.asset");
+            if (graphData == null)
+            {
+                graphData = ScriptableObject.CreateInstance<NodeGraphData>();
+                AssetDatabase.CreateAsset(graphData, "Assets/Script/Editor/NodeGraphData/Node Graph Data.asset");
+                AssetDatabase.SaveAssets();
+            }
         }
 
         //우클릭 누르면 나오는 메뉴를 정하는 메소드
@@ -68,6 +83,60 @@ namespace NodeEditor
             return compatiblePorts;
         }
 
+
+        private void CreateToolbar()
+        {
+            var toolbar = new Toolbar();
+            toolbar.name = "toolbar";
+
+            Button saveButton = new Button(() => SaveToAsset(graphData)) { text = "Save" };
+            Button loadButton = new Button(() => LoadFromAsset(graphData)) { text = "Load" };
+            toolbar.Add(saveButton);
+            toolbar.Add(loadButton);
+
+            Add(toolbar);
+        }
+
+        private void SaveToAsset(NodeGraphData asset)
+        {
+            asset.nodes.Clear();
+
+            foreach (var element in graphElements)
+            {
+                if (element is MyNode node)
+                {
+                    var data = new NodeSaveData
+                    {
+                        type = node.GetType().Name,
+                        guid = node.GUID,
+                        position = node.GetPosition().position
+                    };
+                    asset.nodes.Add(data);
+                }
+            }
+
+#if UNITY_EDITOR
+            EditorUtility.SetDirty(asset);
+            AssetDatabase.SaveAssets();
+#endif
+        }
+
+        private void LoadFromAsset(NodeGraphData asset)
+        {
+            DeleteElements(graphElements);
+
+            foreach(var data in asset.nodes)
+            {
+                if(NodeFactory.TryCreate(data.type, out MyNode node))
+                {
+                    node.GUID = data.guid;
+                    node.SetPosition(new Rect(data.position, new Vector2(200, 150)));
+                    AddElement(node);
+                }
+            }
+        }
+
+
         //노드를 선택하면 호출된다 가끔 한번 클릭해도 2번 호출된다 node의 콜백보다 늦음
         public override void AddToSelection(ISelectable selectable)
         {
@@ -75,12 +144,21 @@ namespace NodeEditor
             Debug.Log("AddToSelection");
         }
 
-        //floatIONode를 자신의 요소로 추가
+        //floatIONode를 자신의 요소로 추가 factory o
         public void CreateFloatIONode(Vector2 position)
         {
-            FloatIONode floatIONode = new ();
+            FloatIONode floatIONode = NodeFactory.Create<FloatIONode>();
+            floatIONode.name = "floatIONode";
             floatIONode.SetPosition(new Rect(position, new Vector2(200, 150)));
             AddElement(floatIONode);
+        }
+
+        //factory x
+        public void CreateFloatONode(Vector2 position)
+        {
+            FloatONode floatONode = new();
+            floatONode.SetPosition(new Rect(position, new Vector2(200, 150)));
+            AddElement(floatONode);
         }
     }
 }

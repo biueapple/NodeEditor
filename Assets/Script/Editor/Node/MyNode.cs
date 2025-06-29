@@ -9,9 +9,16 @@ namespace NodeEditor
     //노드의 기본이 되는 노드로 일단 실행기능만 남아있음
     public abstract class MyNode : UnityEditor.Experimental.GraphView.Node
     {
+        private string guid;
+        public string GUID { get => guid; set => guid = value; }
+        private Vector2 position;
+        public Vector2 Position => position;
+
+
         public MyNode()
         {
             titleContainer.RegisterCallback<MouseDownEvent>(OnTitleDoubleClick);
+            guid = Guid.NewGuid().ToString();
         }
 
         //실행
