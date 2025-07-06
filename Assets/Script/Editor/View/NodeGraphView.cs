@@ -13,8 +13,12 @@ namespace NodeEditor
         private GridBackground gridBackground;
         public GridBackground GridBackground => gridBackground;
 
-        [SerializeField]
-        public NodeGraphData graphData;
+        private NodeGraphData graphData;
+        public NodeGraphData GraphData
+        {
+            get => graphData;
+            set { graphData = value; LoadFromAsset(graphData); }
+        }
 
         public NodeGraphView()
         {
@@ -40,13 +44,15 @@ namespace NodeEditor
             //기능 추가 (마우스 중간으로 윈도우 이동) 커스텀 기능
             this.AddManipulator(new VisualElementContentViewDragger(this, MouseButton.MiddleMouse));
 
-            graphData = AssetDatabase.LoadAssetAtPath<NodeGraphData>("Assets/Script/Editor/NodeGraphData/Node Graph Data.asset");
-            if (graphData == null)
-            {
-                graphData = ScriptableObject.CreateInstance<NodeGraphData>();
-                AssetDatabase.CreateAsset(graphData, "Assets/Script/Editor/NodeGraphData/Node Graph Data.asset");
-                AssetDatabase.SaveAssets();
-            }
+            //graphData = AssetDatabase.LoadAssetAtPath<NodeGraphData>("Assets/Script/Editor/NodeGraphData/Node Graph Data.asset");
+            //if (graphData == null)
+            //{
+            //    graphData = ScriptableObject.CreateInstance<NodeGraphData>();
+            //    AssetDatabase.CreateAsset(graphData, "Assets/Script/Editor/NodeGraphData/Node Graph Data.asset");
+            //    AssetDatabase.SaveAssets();
+            //}
+
+            //graphViewChanged
         }
 
         //우클릭 누르면 나오는 메뉴를 정하는 메소드
@@ -99,6 +105,11 @@ namespace NodeEditor
 
         private void SaveToAsset(NodeGraphData asset)
         {
+            if(asset == null)
+            {
+                Debug.Log("save null");
+                return;
+            }
             asset.nodes.Clear();
 
             foreach (var element in graphElements)
@@ -111,7 +122,11 @@ namespace NodeEditor
                         guid = node.GUID,
                         position = node.GetPosition().position
                     };
+
+                    EdgeSaveData edgeSaveData = new (node);
+
                     asset.nodes.Add(data);
+                    asset.edges.Add(edgeSaveData);
                 }
             }
 
@@ -125,6 +140,13 @@ namespace NodeEditor
         {
             DeleteElements(graphElements);
 
+            if (asset == null)
+            {
+                Debug.Log("load nu;;");
+                return;
+            }
+                
+
             foreach(var data in asset.nodes)
             {
                 if(NodeFactory.TryCreate(data.type, out MyNode node))
@@ -134,9 +156,25 @@ namespace NodeEditor
                     AddElement(node);
                 }
             }
+
+            foreach(var data in asset.edges)
+            {
+                var outputNode = FindNodeByGUID(data.outputNodeGUID);
+            }
         }
 
-
+        private MyNode FindNodeByGUID(string guid)
+        {
+            foreach (var element in graphElements)
+            {
+                if (element is MyNode node)
+                {
+                    if (node.GUID.Equals(guid))
+                        return node;
+                }
+            }
+            return null;
+        }
         //노드를 선택하면 호출된다 가끔 한번 클릭해도 2번 호출된다 node의 콜백보다 늦음
         public override void AddToSelection(ISelectable selectable)
         {

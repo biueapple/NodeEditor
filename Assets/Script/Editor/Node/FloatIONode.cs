@@ -7,9 +7,6 @@ namespace NodeEditor
     //Input = float, output = float 인 노드
     public class FloatIONode : MyNode
     {
-        private Port input;
-        private Port output;
-
         public FloatIONode() : base()
         {
             title = "Float IO Node";
@@ -23,9 +20,9 @@ namespace NodeEditor
 
             inputContainer.Add(input);
 
-            output = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
-            output.portName = "Output";
-            outputContainer.Add(output);
+            output.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float)));
+            output[0].portName = "Output";
+            outputContainer.Add(output[0]);
 
             RefreshExpandedState();
             RefreshPorts();

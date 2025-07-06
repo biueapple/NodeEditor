@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -18,6 +14,14 @@ namespace NodeEditor
         {
             var window = GetWindow<NodeGraphEditor>();
             window.titleContent = new GUIContent("Node Graph Editor");
+        }
+
+        //윈도우 창을 생성하는 코드
+        public static void OpenGraphEditor(NodeGraphData data)
+        {
+            var window = GetWindow<NodeGraphEditor>();
+            window.titleContent = new GUIContent("Node Graph Editor");
+            window.nodeGraphView.GraphData = data;
         }
 
         //윈도우 창이 생성됬을때 호출
@@ -42,6 +46,8 @@ namespace NodeEditor
             //공간을 얼마나 차지할지 1이면 남은 모든 공간을 차지
             root.style.flexGrow = 1;
             nodeGraphView.style.flexGrow = 1;
+
+            //nodeGraphView.GraphData = nodeGraphData;
 
             root.Add(nodeGraphView);
 

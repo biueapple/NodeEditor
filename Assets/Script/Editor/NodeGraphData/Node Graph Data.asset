@@ -15,4 +15,4 @@ MonoBehaviour:
   nodes:
   - type: FloatIONode
     guid: e51271a1-57f9-407b-9f84-b6121f5fb25e
-    position: {x: 568, y: 445}
+    position: {x: 602, y: 276}

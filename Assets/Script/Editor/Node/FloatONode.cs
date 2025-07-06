@@ -5,15 +5,13 @@ namespace NodeEditor
 {
     public class FloatONode : MyNode
     {
-        private Port output;
-
         public FloatONode() : base()
         {
             title = "Float IO Node";
 
-            output = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
-            output.portName = "Output";
-            outputContainer.Add(output);
+            output.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float)));
+            output[0].portName = "Output";
+            outputContainer.Add(output[0]);
 
             RefreshExpandedState();
             RefreshPorts();
