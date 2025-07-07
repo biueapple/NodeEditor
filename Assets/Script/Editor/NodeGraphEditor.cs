@@ -22,6 +22,7 @@ namespace NodeEditor
             var window = GetWindow<NodeGraphEditor>();
             window.titleContent = new GUIContent("Node Graph Editor");
             window.nodeGraphView.GraphData = data;
+            window.nodeGraphView.Load();
         }
 
         //윈도우 창이 생성됬을때 호출
@@ -57,6 +58,11 @@ namespace NodeEditor
 
             //ui트리 최상단 여기에 등록된 순서로 에디터 창에 그려짐
             rootVisualElement.Add(root);
+        }
+
+        private void OnDisable()
+        {
+            nodeGraphView?.AutoSave();
         }
     }
 }

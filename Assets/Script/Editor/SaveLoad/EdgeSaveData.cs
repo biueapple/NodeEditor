@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace NodeEditor
@@ -11,19 +13,19 @@ namespace NodeEditor
         public string inputNodeGUID;
         public string inputName;
 
-        public EdgeSaveData(MyNode node)
+        public EdgeSaveData(Edge edge)
         {
-            for(int i = 0; i < node.output.Count; i++)
+            if(edge.output?.node is MyNode outNode)
             {
-                outputNodeGUID = node.GUID;
-                outputName = node.output[i].portName;
+                outputNodeGUID = outNode.GUID;
+                outputName = edge.output.portName;
             }
 
-            if (node.input == null)
-                return;
-
-            inputNodeGUID = node.GUID;
-            inputName = node.input.portName;
+            if(edge.input?.node is MyNode inNode)
+            {
+                inputNodeGUID = inNode.GUID;
+                inputName = edge.input.portName;
+            }
         }
     }
 }

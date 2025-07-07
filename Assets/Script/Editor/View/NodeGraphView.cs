@@ -17,7 +17,7 @@ namespace NodeEditor
         public NodeGraphData GraphData
         {
             get => graphData;
-            set { graphData = value; LoadFromAsset(graphData); }
+            set { graphData = value; }
         }
 
         public NodeGraphView()
@@ -43,16 +43,6 @@ namespace NodeEditor
             this.AddManipulator(new RectangleSelector());
             //기능 추가 (마우스 중간으로 윈도우 이동) 커스텀 기능
             this.AddManipulator(new VisualElementContentViewDragger(this, MouseButton.MiddleMouse));
-
-            //graphData = AssetDatabase.LoadAssetAtPath<NodeGraphData>("Assets/Script/Editor/NodeGraphData/Node Graph Data.asset");
-            //if (graphData == null)
-            //{
-            //    graphData = ScriptableObject.CreateInstance<NodeGraphData>();
-            //    AssetDatabase.CreateAsset(graphData, "Assets/Script/Editor/NodeGraphData/Node Graph Data.asset");
-            //    AssetDatabase.SaveAssets();
-            //}
-
-            //graphViewChanged
         }
 
         //우클릭 누르면 나오는 메뉴를 정하는 메소드
@@ -89,7 +79,7 @@ namespace NodeEditor
             return compatiblePorts;
         }
 
-
+        //테스트 용으로 view 위에 툴바를 만들어 세이브 로드 버튼을 달아줌
         private void CreateToolbar()
         {
             var toolbar = new Toolbar();
@@ -103,17 +93,33 @@ namespace NodeEditor
             Add(toolbar);
         }
 
+        public void AutoSave()
+        {
+            SaveToAsset(graphData);
+        }
+
+        public void Load()
+        {
+            LoadFromAsset(graphData);
+        }
+
+        //노드와 선을 저장
         private void SaveToAsset(NodeGraphData asset)
         {
+            //저장할 asset이 null이면 리턴
             if(asset == null)
             {
                 Debug.Log("save null");
                 return;
             }
+            //일단 저장되어 있는거 없애고
             asset.nodes.Clear();
+            asset.edges.Clear();
 
+            //모든 속성에 대해서
             foreach (var element in graphElements)
             {
+                //내가 정의한 노드라면
                 if (element is MyNode node)
                 {
                     var data = new NodeSaveData
@@ -123,32 +129,42 @@ namespace NodeEditor
                         position = node.GetPosition().position
                     };
 
-                    EdgeSaveData edgeSaveData = new (node);
-
+                    //저장
                     asset.nodes.Add(data);
-                    asset.edges.Add(edgeSaveData);
                 }
             }
 
+            //모든 선들도 마찬가지
+            foreach(var edge in edges)
+            {
+                EdgeSaveData edgeSaveData = new EdgeSaveData(edge);
+                asset.edges.Add(edgeSaveData);
+            }
+
 #if UNITY_EDITOR
+            asset.hideFlags = HideFlags.None;   // 반드시 저장 전에 플래그 해제 이거 안하면 에러가 남 (왜 scriptobject에다가 Serializable 된 클래스인데도 에러가 나는건지)
             EditorUtility.SetDirty(asset);
             AssetDatabase.SaveAssets();
 #endif
         }
 
+        //노드와 선을 로드하는 메소드
         private void LoadFromAsset(NodeGraphData asset)
         {
+            //일단 현재 모든 속성들 없애야 함
             DeleteElements(graphElements);
 
+            //불러올게 없나봐
             if (asset == null)
             {
                 Debug.Log("load nu;;");
                 return;
             }
                 
-
+            //모든 노드를 불러오기
             foreach(var data in asset.nodes)
             {
+                //생성 가능한것들만
                 if(NodeFactory.TryCreate(data.type, out MyNode node))
                 {
                     node.GUID = data.guid;
@@ -157,12 +173,23 @@ namespace NodeEditor
                 }
             }
 
+            //모든 선들도 불러오기
             foreach(var data in asset.edges)
             {
                 var outputNode = FindNodeByGUID(data.outputNodeGUID);
+                var inputNode = FindNodeByGUID(data.inputNodeGUID);
+                var outputPort = FindPort(outputNode, data.outputName, Direction.Output);
+                var inputPort = FindPort(inputNode, data.inputName, Direction.Input);
+
+                if(outputPort != null && inputPort != null)
+                {
+                    var edge = outputPort.ConnectTo(inputPort);
+                    AddElement(edge);
+                }
             }
         }
 
+        //노드를 guid로 찾아오기
         private MyNode FindNodeByGUID(string guid)
         {
             foreach (var element in graphElements)
@@ -175,6 +202,30 @@ namespace NodeEditor
             }
             return null;
         }
+
+        //선들이 어느 노드의 포트에 연결되어 있는지 리턴
+        private Port FindPort(MyNode node, string portName, Direction direction)
+        {
+            if (node == null)
+                return null;
+
+            if(direction == Direction.Input)
+            {
+                if (node.input != null && node.input.portName == portName)
+                    return node.input;
+            }
+            else
+            {
+                foreach(var port in node.output)
+                {
+                    if (port.portName == portName)
+                        return port;
+                }
+            }
+            return null;
+        }
+
+
         //노드를 선택하면 호출된다 가끔 한번 클릭해도 2번 호출된다 node의 콜백보다 늦음
         public override void AddToSelection(ISelectable selectable)
         {
