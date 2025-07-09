@@ -13,13 +13,6 @@ namespace NodeEditor
         private GridBackground gridBackground;
         public GridBackground GridBackground => gridBackground;
 
-        private NodeGraphData graphData;
-        public NodeGraphData GraphData
-        {
-            get => graphData;
-            set { graphData = value; }
-        }
-
         public NodeGraphView()
         {
             //줌 기능
@@ -35,7 +28,7 @@ namespace NodeEditor
             //배경을 추가함
             Insert(0, gridBackground);
 
-            CreateToolbar();
+            //CreateToolbar();
 
             //기능 추가 (노드 선택) 유니티 기능
             this.AddManipulator(new SelectionDragger());
@@ -79,32 +72,8 @@ namespace NodeEditor
             return compatiblePorts;
         }
 
-        //테스트 용으로 view 위에 툴바를 만들어 세이브 로드 버튼을 달아줌
-        private void CreateToolbar()
-        {
-            var toolbar = new Toolbar();
-            toolbar.name = "toolbar";
-
-            Button saveButton = new Button(() => SaveToAsset(graphData)) { text = "Save" };
-            Button loadButton = new Button(() => LoadFromAsset(graphData)) { text = "Load" };
-            toolbar.Add(saveButton);
-            toolbar.Add(loadButton);
-
-            Add(toolbar);
-        }
-
-        public void AutoSave()
-        {
-            SaveToAsset(graphData);
-        }
-
-        public void Load()
-        {
-            LoadFromAsset(graphData);
-        }
-
         //노드와 선을 저장
-        private void SaveToAsset(NodeGraphData asset)
+        public void SaveToAsset(NodeGraphData asset)
         {
             //저장할 asset이 null이면 리턴
             if(asset == null)
@@ -149,7 +118,7 @@ namespace NodeEditor
         }
 
         //노드와 선을 로드하는 메소드
-        private void LoadFromAsset(NodeGraphData asset)
+        public void LoadFromAsset(NodeGraphData asset)
         {
             //일단 현재 모든 속성들 없애야 함
             DeleteElements(graphElements);

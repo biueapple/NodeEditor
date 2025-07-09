@@ -8,21 +8,29 @@ namespace NodeEditor
     {
         private NodeGraphView nodeGraphView;
 
-        //윈도우 창을 생성하는 코드
-        [MenuItem("Window/Node Graph Editor")]
-        public static void OpenGraphEditor()
-        {
-            var window = GetWindow<NodeGraphEditor>();
-            window.titleContent = new GUIContent("Node Graph Editor");
-        }
+        [SerializeField]
+        private NodeGraphData graphData;
 
         //윈도우 창을 생성하는 코드
         public static void OpenGraphEditor(NodeGraphData data)
         {
             var window = GetWindow<NodeGraphEditor>();
             window.titleContent = new GUIContent("Node Graph Editor");
-            window.nodeGraphView.GraphData = data;
-            window.nodeGraphView.Load();
+            window.graphData = data;
+            window.nodeGraphView.LoadFromAsset(data);
+        }
+
+        public void OnEnable()
+        {
+            if(graphData == null)
+            {
+                string[] guids = AssetDatabase.FindAssets("t:NodeGraphData");
+                if(guids.Length > 0)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+                    graphData = AssetDatabase.LoadAssetAtPath<NodeGraphData>(path);
+                }
+            }
         }
 
         //윈도우 창이 생성됬을때 호출
@@ -62,7 +70,7 @@ namespace NodeEditor
 
         private void OnDisable()
         {
-            nodeGraphView?.AutoSave();
+            nodeGraphView?.SaveToAsset(graphData);
         }
     }
 }
