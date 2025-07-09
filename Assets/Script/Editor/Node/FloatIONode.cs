@@ -28,7 +28,7 @@ namespace NodeEditor
             RefreshPorts();
         }
 
-        public override void Excute()
+        public override void Execute()
         {
             Debug.Log("Excute");
         }

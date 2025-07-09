@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodes:
   - type: FloatIONode
-    guid: 952aa5f7-d8f8-4888-b099-8347412f6ba4
-    position: {x: 449, y: 231}
+    guid: c595ed6f-cf0a-4851-8ce2-f55b69133ec6
+    position: {x: 441, y: 308}
   - type: FloatIONode
-    guid: 4ddb4349-c41c-4953-a1de-33254a61b865
-    position: {x: 884, y: 319}
+    guid: e96c78ab-0d2a-46a2-9a58-e1bc2c3e4ea0
+    position: {x: 803, y: 348}
   edges:
-  - outputNodeGUID: 952aa5f7-d8f8-4888-b099-8347412f6ba4
+  - outputNodeGUID: c595ed6f-cf0a-4851-8ce2-f55b69133ec6
     outputName: Output
-    inputNodeGUID: 4ddb4349-c41c-4953-a1de-33254a61b865
+    inputNodeGUID: e96c78ab-0d2a-46a2-9a58-e1bc2c3e4ea0
     inputName: Input

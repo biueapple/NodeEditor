@@ -10,6 +10,7 @@ namespace NodeEditor
         public string category;
         public Texture2D icon;
         public Func<MyNode> constructor;
+        public Vector2 size;
         public bool isVisiblePalette = true;
     }
 }

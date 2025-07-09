@@ -22,10 +22,10 @@ namespace NodeEditor
 
         public void OnEnable()
         {
-            if(graphData == null)
+            if (graphData == null)
             {
                 string[] guids = AssetDatabase.FindAssets("t:NodeGraphData");
-                if(guids.Length > 0)
+                if (guids.Length > 0)
                 {
                     string path = AssetDatabase.GUIDToAssetPath(guids[0]);
                     graphData = AssetDatabase.LoadAssetAtPath<NodeGraphData>(path);
@@ -37,6 +37,8 @@ namespace NodeEditor
         public void CreateGUI()
         {
             ConstructGraphView();
+            //자동 로드
+            nodeGraphView?.LoadFromAsset(graphData);
         }
 
         //기본적인 배경 만들고 추가
@@ -56,12 +58,10 @@ namespace NodeEditor
             root.style.flexGrow = 1;
             nodeGraphView.style.flexGrow = 1;
 
-            //nodeGraphView.GraphData = nodeGraphData;
-
             root.Add(nodeGraphView);
 
             // 팔레트 패널 (Shader Graph 스타일)
-            NodeGraphPaletteView palette = new NodeGraphPaletteView(nodeGraphView);
+            NodeGraphPaletteView palette = new (nodeGraphView);
             root.Add(palette);
 
             //ui트리 최상단 여기에 등록된 순서로 에디터 창에 그려짐

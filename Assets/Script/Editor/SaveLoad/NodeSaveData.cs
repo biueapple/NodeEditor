@@ -9,6 +9,7 @@ namespace NodeEditor
         public string type;
         public string guid;
         public Vector2 position;
+        public Vector2 size;
     }
 }
 

@@ -7,7 +7,9 @@ namespace NodeEditor
 {
     public class NodeGraphPaletteView : GraphView
     {
-        private NodeGraphView nodeGraphView;
+        private readonly NodeGraphView nodeGraphView;
+        private readonly Button plusButton;
+
         public NodeGraphPaletteView(NodeGraphView nodeGraphView)
         {
             this.nodeGraphView = nodeGraphView;
@@ -25,7 +27,7 @@ namespace NodeEditor
             style.paddingLeft = 10;
             style.paddingTop = 10;
 
-            VisualElement topElement = new VisualElement();
+            VisualElement topElement = new ();
             topElement.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f);
             //자신의 크기를 자동으로 설정해주는거 (높이는 수동으로 정하고 좌우는 자동으로 맞춰주기)
             topElement.style.alignSelf = Align.Stretch;
@@ -35,19 +37,19 @@ namespace NodeEditor
             topElement.style.marginTop = -10;
 
             //라벨 추가
-            Label label = new Label("Node Graph");
+            Label label = new ("Node Graph");
             //텍스트 정렬
             label.style.unityTextAlign = TextAnchor.UpperLeft;
             label.style.marginTop = 10;
             label.style.marginLeft = 10;
 
-            Button plus = new Button(() => AddParam()) { text = "+" };
-            plus.style.alignSelf = Align.FlexEnd;
-            plus.style.width = 20;
-            plus.style.height = 20;
+            plusButton = new Button(() => ShowMenu()) { text = "+" };
+            plusButton.style.alignSelf = Align.FlexEnd;
+            plusButton.style.width = 20;
+            plusButton.style.height = 20;
 
             topElement.Add(label);
-            topElement.Add(plus);
+            topElement.Add(plusButton);
 
             Add(topElement);
 
@@ -55,15 +57,27 @@ namespace NodeEditor
             this.AddManipulator(new VisualElementDragger(MouseButton.LeftMouse));
         }
 
+        private void ShowMenu()
+        {
+            GenericMenu genericMenu = new ();
+            foreach(var (type, metaData) in NodeFactory.NodeConstructor)
+            {
+                if(metaData.isVisiblePalette)
+                {
+                    genericMenu.AddItem(new GUIContent(metaData.displayName), false, () => AddParam(type.Name));
+                }
+            }
+        }
+
         //일단 테스트 용도로 floatIONode를 화면 중앙에 생성
-        private void AddParam()
+        private void AddParam(string typename)
         {
             Vector2 viewCenter = nodeGraphView.layout.size / 2;
             //노드 크기를 계산해서 더 중앙으로
             //Vector2 nodeSize = new Vector2(200, 150);
             //Vector2 nodePosition = viewCenter - nodeSize / 2;
 
-            nodeGraphView.CreateFloatONode(viewCenter);
+            nodeGraphView.CreateNode(typename, viewCenter);
         }
     }
 }

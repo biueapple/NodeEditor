@@ -10,7 +10,7 @@ namespace NodeEditor
     //에디터 윈도우를 꾸미는 요소중에 하나
     public class NodeGraphView : GraphView
     {
-        private GridBackground gridBackground;
+        private readonly GridBackground gridBackground;
         public GridBackground GridBackground => gridBackground;
 
         public NodeGraphView()
@@ -19,8 +19,10 @@ namespace NodeEditor
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 
             //배경
-            gridBackground = new ();
-            gridBackground.name = "gridBackground";
+            gridBackground = new()
+            {
+                name = "gridBackground"
+            };
 
             //배경의 색깔을 정함
             gridBackground.style.backgroundColor = Color.black;
@@ -76,7 +78,7 @@ namespace NodeEditor
         public void SaveToAsset(NodeGraphData asset)
         {
             //저장할 asset이 null이면 리턴
-            if(asset == null)
+            if (asset == null)
             {
                 Debug.Log("save null");
                 return;
@@ -95,7 +97,8 @@ namespace NodeEditor
                     {
                         type = node.GetType().Name,
                         guid = node.GUID,
-                        position = node.GetPosition().position
+                        position = node.GetPosition().position,
+                        size = node.GetPosition().size
                     };
 
                     //저장
@@ -106,7 +109,7 @@ namespace NodeEditor
             //모든 선들도 마찬가지
             foreach(var edge in edges)
             {
-                EdgeSaveData edgeSaveData = new EdgeSaveData(edge);
+                EdgeSaveData edgeSaveData = new (edge);
                 asset.edges.Add(edgeSaveData);
             }
 
@@ -137,7 +140,7 @@ namespace NodeEditor
                 if(NodeFactory.TryCreate(data.type, out MyNode node))
                 {
                     node.GUID = data.guid;
-                    node.SetPosition(new Rect(data.position, new Vector2(200, 150)));
+                    node.SetPosition(new Rect(data.position, data.size != Vector2.zero ? data.size : NodeFactory.NodeConstructor[NodeFactory.NameToType[data.type]].size));
                     AddElement(node);
                 }
             }
@@ -205,18 +208,26 @@ namespace NodeEditor
         //floatIONode를 자신의 요소로 추가 factory o
         public void CreateFloatIONode(Vector2 position)
         {
-            FloatIONode floatIONode = NodeFactory.Create<FloatIONode>();
+            FloatIONode floatIONode = NodeFactory.Create<FloatIONode>(position);
             floatIONode.name = "floatIONode";
-            floatIONode.SetPosition(new Rect(position, new Vector2(200, 150)));
             AddElement(floatIONode);
         }
 
         //factory x
         public void CreateFloatONode(Vector2 position)
         {
-            FloatONode floatONode = new();
-            floatONode.SetPosition(new Rect(position, new Vector2(200, 150)));
+            FloatONode floatONode = NodeFactory.Create<FloatONode>(position);
+            floatONode.name = "floatONode";
             AddElement(floatONode);
+        }
+
+        public void CreateNode(string typeName, Vector2 position)
+        {
+            if(NodeFactory.TryCreate(typeName, position, out MyNode node))
+            {
+                node.name = "typeName";
+                AddElement(node);
+            }
         }
     }
 }

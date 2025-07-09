@@ -12,5 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf11b15cdcbae87418ae295348b267cd, type: 3}
   m_Name: New Node Graph Data
   m_EditorClassIdentifier: 
-  nodes: []
+  nodes:
+  - type: FloatIONode
+    guid: 6d59e7b3-71e7-49c4-af4c-9a55a9be6fa6
+    position: {x: 518, y: 286}
+    size: {x: 136, y: 77}
   edges: []

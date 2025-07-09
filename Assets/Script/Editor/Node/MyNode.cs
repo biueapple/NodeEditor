@@ -24,7 +24,7 @@ namespace NodeEditor
         }
 
         //실행
-        public abstract void Excute();
+        public abstract void Execute();
 
         //뭔가 당하면 (삭제 복사 복제) 호출되는듯
         public override void CollectElements(HashSet<GraphElement> collectedElementSet, Func<GraphElement, bool> conditionFunc)
@@ -85,9 +85,11 @@ namespace NodeEditor
             titleContainer.Clear();
 
             //새로운 이름을 정할 입력창 만들기
-            TextField rename = new();
-            //일단 지금 있던 이름 넣어두기
-            rename.value = title;
+            TextField rename = new()
+            {
+                //일단 지금 있던 이름 넣어두기
+                value = title
+            };
             //중앙 정렬
             rename.style.unityTextAlign = TextAnchor.MiddleCenter;
             //입력창 넣기
@@ -115,9 +117,12 @@ namespace NodeEditor
             titleContainer.Clear();
 
             //라벨을 만들어서 title의 값을 넣기
-            Label titleLabel = new Label(title);
-            //중앙 정렬
-            titleLabel.name = "title-label";
+            Label titleLabel = new(title)
+            {
+                //이름을 정해줘야 알아서 정렬해줌
+                name = "title-label"
+            };
+            //titleLabel.name = "title-label";
 
             //라벨 넣어서 이름 표시하기
             titleContainer.Add(titleLabel);
