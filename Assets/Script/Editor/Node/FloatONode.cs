@@ -7,7 +7,7 @@ namespace NodeEditor
     {
         public FloatONode() : base()
         {
-            title = "Float IO Node";
+            title = "Float O Node";
 
             output.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float)));
             output[0].portName = "Output";

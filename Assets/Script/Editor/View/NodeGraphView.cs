@@ -221,13 +221,15 @@ namespace NodeEditor
             AddElement(floatONode);
         }
 
-        public void CreateNode(string typeName, Vector2 position)
+        public MyNode CreateNode(string typeName, Vector2 position)
         {
             if(NodeFactory.TryCreate(typeName, position, out MyNode node))
             {
                 node.name = "typeName";
                 AddElement(node);
+                return node;
             }
+            return null;
         }
     }
 }

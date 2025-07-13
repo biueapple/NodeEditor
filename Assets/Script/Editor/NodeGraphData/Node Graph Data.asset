@@ -16,9 +16,11 @@ MonoBehaviour:
   - type: FloatIONode
     guid: c595ed6f-cf0a-4851-8ce2-f55b69133ec6
     position: {x: 441, y: 308}
+    size: {x: 136, y: 77}
   - type: FloatIONode
     guid: e96c78ab-0d2a-46a2-9a58-e1bc2c3e4ea0
     position: {x: 803, y: 348}
+    size: {x: 136, y: 77}
   edges:
   - outputNodeGUID: c595ed6f-cf0a-4851-8ce2-f55b69133ec6
     outputName: Output

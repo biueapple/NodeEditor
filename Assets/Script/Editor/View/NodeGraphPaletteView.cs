@@ -9,6 +9,9 @@ namespace NodeEditor
     {
         private readonly NodeGraphView nodeGraphView;
         private readonly Button plusButton;
+        private readonly ScrollView listView;
+        private readonly VisualElement detailView;
+        private PaletteItem selectItem;
 
         public NodeGraphPaletteView(NodeGraphView nodeGraphView)
         {
@@ -43,6 +46,7 @@ namespace NodeEditor
             label.style.marginTop = 10;
             label.style.marginLeft = 10;
 
+            //+ 버튼 생성
             plusButton = new Button(() => ShowMenu()) { text = "+" };
             plusButton.style.alignSelf = Align.FlexEnd;
             plusButton.style.width = 20;
@@ -52,6 +56,16 @@ namespace NodeEditor
             topElement.Add(plusButton);
 
             Add(topElement);
+
+
+            listView = new ();
+            listView.style.flexGrow = 1;
+            Add(listView);
+
+            detailView = new();
+            detailView.style.flexGrow = 1;
+            detailView.style.paddingTop = 4;
+            Add(detailView);
 
             //마우스 클릭으로 드래그하여 움직이도록 하는 기능 추가
             this.AddManipulator(new VisualElementDragger(MouseButton.LeftMouse));
@@ -67,6 +81,7 @@ namespace NodeEditor
                     genericMenu.AddItem(new GUIContent(metaData.displayName), false, () => AddParam(type.Name));
                 }
             }
+            genericMenu.ShowAsContext();
         }
 
         //일단 테스트 용도로 floatIONode를 화면 중앙에 생성
@@ -77,7 +92,29 @@ namespace NodeEditor
             //Vector2 nodeSize = new Vector2(200, 150);
             //Vector2 nodePosition = viewCenter - nodeSize / 2;
 
-            nodeGraphView.CreateNode(typename, viewCenter);
+            MyNode node = nodeGraphView.CreateNode(typename, viewCenter);
+            if (node == null)
+                return;
+
+            if(NodeFactory.NameToType.TryGetValue(typename, out var type) && NodeFactory.NodeConstructor.TryGetValue(type, out var meta))
+            {
+                PaletteItem item = new(typename, meta);
+                item.RegisterCallback<MouseDownEvent>(_ => ShowDetail(item));
+                listView.Add(item);
+            }
+        }
+
+        private void ShowDetail(PaletteItem item)
+        {
+            selectItem = item;
+            detailView.Clear();
+            TextField nameField = new("Name") { value = item.MetaData.displayName };
+            nameField.RegisterValueChangedCallback(evt =>
+            {
+                item.MetaData.displayName = evt.newValue;
+                item.UpdateDisplay();
+            });
+            detailView.Add(nameField);
         }
     }
 }

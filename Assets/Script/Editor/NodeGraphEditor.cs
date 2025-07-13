@@ -15,9 +15,15 @@ namespace NodeEditor
         public static void OpenGraphEditor(NodeGraphData data)
         {
             var window = GetWindow<NodeGraphEditor>();
+
+            if(window.nodeGraphView != null && window.graphData != null && window.graphData != data)
+            {
+                window.nodeGraphView.SaveToAsset(window.graphData);
+            }
+
             window.titleContent = new GUIContent("Node Graph Editor");
             window.graphData = data;
-            window.nodeGraphView.LoadFromAsset(data);
+            window.nodeGraphView?.LoadFromAsset(data);
         }
 
         public void OnEnable()
