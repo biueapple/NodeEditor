@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -8,14 +9,16 @@ namespace NodeEditor
     public class NodeGraphPaletteView : GraphView
     {
         private readonly NodeGraphView nodeGraphView;
+        private readonly NodeInspectorView inspectorView;
         private readonly Button plusButton;
         private readonly ScrollView listView;
-        private readonly VisualElement detailView;
+        private readonly Dictionary<PaletteItem, MyNode> itemToNode = new();
         private PaletteItem selectItem;
 
-        public NodeGraphPaletteView(NodeGraphView nodeGraphView)
+        public NodeGraphPaletteView(NodeGraphView nodeGraphView, NodeInspectorView inspectorView)
         {
             this.nodeGraphView = nodeGraphView;
+            this.inspectorView = inspectorView;
 
             style.position = Position.Absolute;
             style.left = 20;
@@ -62,11 +65,6 @@ namespace NodeEditor
             listView.style.flexGrow = 1;
             Add(listView);
 
-            detailView = new();
-            detailView.style.flexGrow = 1;
-            detailView.style.paddingTop = 4;
-            Add(detailView);
-
             //마우스 클릭으로 드래그하여 움직이도록 하는 기능 추가
             this.AddManipulator(new VisualElementDragger(MouseButton.LeftMouse));
         }
@@ -102,20 +100,33 @@ namespace NodeEditor
                 item.UpdateDisplay();
                 item.RegisterCallback<MouseDownEvent>(_ => ShowDetail(item));
                 listView.Add(item);
+                itemToNode[item] = node;
+                inspectorView.Show(item, () => RemoveItem(item));
             }
         }
 
         private void ShowDetail(PaletteItem item)
         {
             selectItem = item;
-            detailView.Clear();
             TextField nameField = new("Name") { value = item.MetaData.displayName };
             nameField.RegisterValueChangedCallback(evt =>
             {
                 item.MetaData.displayName = evt.newValue;
                 item.UpdateDisplay();
             });
-            detailView.Add(nameField);
+
+            inspectorView.Show(item, () => RemoveItem(item));
+        }
+
+        private void RemoveItem(PaletteItem item)
+        {
+            if(itemToNode.TryGetValue(item, out MyNode node))
+            {
+                nodeGraphView.RemoveElement(node);
+                itemToNode.Remove(item);
+            }
+            listView.Remove(item);
+            inspectorView.Show(null, null);
         }
     }
 }

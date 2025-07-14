@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace NodeEditor
@@ -16,9 +17,11 @@ namespace NodeEditor
             label = new();
             Add(label);
             style.paddingBottom = 2;
-            style.paddingTop = 2;
+            style.paddingTop = 10;
+            style.marginTop = 11;
             style.paddingLeft = 4;
             style.paddingRight = 4;
+            style.backgroundColor = new Color(0.2f, 0.2f, 0.2f);
         }
 
         public void UpdateDisplay()
