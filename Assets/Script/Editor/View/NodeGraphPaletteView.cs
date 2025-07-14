@@ -99,6 +99,7 @@ namespace NodeEditor
             if(NodeFactory.NameToType.TryGetValue(typename, out var type) && NodeFactory.NodeConstructor.TryGetValue(type, out var meta))
             {
                 PaletteItem item = new(typename, meta);
+                item.UpdateDisplay();
                 item.RegisterCallback<MouseDownEvent>(_ => ShowDetail(item));
                 listView.Add(item);
             }
