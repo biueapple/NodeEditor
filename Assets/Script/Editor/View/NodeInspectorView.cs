@@ -16,6 +16,9 @@ namespace NodeEditor
             style.backgroundColor = new Color(0.15f, 0.15f, 0.15f);
             style.paddingLeft = 10;
             style.paddingTop = 10;
+
+            //마우스 클릭으로 드래그하여 움직이도록 하는 기능 추가
+            this.AddManipulator(new VisualElementDragger(MouseButton.LeftMouse));
         }
 
         public void Show(PaletteItem item, System.Action onDelete)

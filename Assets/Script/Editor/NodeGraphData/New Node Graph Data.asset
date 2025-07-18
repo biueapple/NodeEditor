@@ -18,7 +18,7 @@ MonoBehaviour:
     position: {x: 524, y: 202}
     size: {x: 136, y: 77}
   - type: FloatONode
-    guid: 5dfc6d9f-576c-468d-ac82-2031a2e72b1c
-    position: {x: 572, y: 319}
+    guid: 498a1886-3141-404d-8822-ad47e7aff254
+    position: {x: 539, y: 335}
     size: {x: 121, y: 77}
   edges: []

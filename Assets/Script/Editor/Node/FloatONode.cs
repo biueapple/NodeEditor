@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace NodeEditor
 {
+    [NodeAttribute("FloatO", description = "FloatO", category = "/Node/FloatONode", isVisiblePalette = true)]
     public class FloatONode : MyNode
     {
         public FloatONode() : base()

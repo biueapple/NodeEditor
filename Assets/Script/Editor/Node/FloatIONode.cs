@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 namespace NodeEditor
 {
     //Input = float, output = float 인 노드
+    [NodeAttribute("floatIO", description = "floatIO", category = "Node/FloatIONode", isVisiblePalette = false)]
     public class FloatIONode : MyNode
     {
         public FloatIONode() : base()

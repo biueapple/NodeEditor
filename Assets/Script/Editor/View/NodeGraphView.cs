@@ -52,7 +52,17 @@ namespace NodeEditor
             //this를 쓰면 안되는 이유는 이벤트 타겟이 graphview가 아닐 수 있기 때문에 항상 graphview를 기준으로 하는것은 죄표 해석이 엉킬 수 있다고 함
             Vector2 worldMouse = evt.mousePosition;
             Vector2 localMouse = (evt.target as VisualElement).ChangeCoordinatesTo(contentViewContainer, worldMouse);
-            evt.menu.AppendAction("FloatIONode", action => CreateFloatIONode(localMouse));
+            //evt.menu.AppendAction("FloatIONode", action => CreateFloatIONode(localMouse));
+
+            foreach (var kv in NodeFactory.NodeConstructor)
+            {
+                var type = kv.Key;
+                var meta = kv.Value;
+                //팔레트에 보이는건 우클릭으로 보이면 안되지
+                if (meta.isVisiblePalette)
+                    continue;
+                evt.menu.AppendAction(meta.displayName, _ => { var node = NodeFactory.Create(type, localMouse); if (node != null) AddElement(node); });
+            }
         }
 
         //어떤 port가 연결 가능한 포트인지 판탄해주는 메소드
@@ -198,29 +208,7 @@ namespace NodeEditor
         }
 
 
-        //노드를 선택하면 호출된다 가끔 한번 클릭해도 2번 호출된다 node의 콜백보다 늦음
-        public override void AddToSelection(ISelectable selectable)
-        {
-            base.AddToSelection(selectable);
-            Debug.Log("AddToSelection");
-        }
-
-        //floatIONode를 자신의 요소로 추가 factory o
-        public void CreateFloatIONode(Vector2 position)
-        {
-            FloatIONode floatIONode = NodeFactory.Create<FloatIONode>(position);
-            floatIONode.name = "floatIONode";
-            AddElement(floatIONode);
-        }
-
-        //factory x
-        public void CreateFloatONode(Vector2 position)
-        {
-            FloatONode floatONode = NodeFactory.Create<FloatONode>(position);
-            floatONode.name = "floatONode";
-            AddElement(floatONode);
-        }
-
+        //없어질 예정
         public MyNode CreateNode(string typeName, Vector2 position)
         {
             if(NodeFactory.TryCreate(typeName, position, out MyNode node))
