@@ -14,13 +14,14 @@ namespace NodeEditor
         {
             TypeName = typeName;
             MetaData = nodeMetaData;
-            label = new();
+            label = new()
+            {
+                name = "paletteItem"
+            };
             Add(label);
-            style.paddingBottom = 2;
-            style.paddingTop = 10;
-            style.marginTop = 11;
-            style.paddingLeft = 4;
-            style.paddingRight = 4;
+            style.paddingTop = 5;
+            style.paddingBottom = 5;
+            style.marginTop = 5;
             style.backgroundColor = new Color(0.2f, 0.2f, 0.2f);
         }
 

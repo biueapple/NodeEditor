@@ -13,7 +13,6 @@ namespace NodeEditor
         private readonly Button plusButton;
         private readonly ScrollView listView;
         private readonly Dictionary<PaletteItem, MyNode> itemToNode = new();
-        private PaletteItem selectItem;
 
         public NodeGraphPaletteView(NodeGraphView nodeGraphView, NodeInspectorView inspectorView)
         {
@@ -43,11 +42,14 @@ namespace NodeEditor
             topElement.style.marginTop = -10;
 
             //라벨 추가
-            Label label = new ("Node Graph");
+            Label label = new("Node Graph")
+            {
+                name = "title-label"
+            };
             //텍스트 정렬
             label.style.unityTextAlign = TextAnchor.UpperLeft;
-            label.style.marginTop = 10;
-            label.style.marginLeft = 10;
+            label.style.paddingLeft = 10;
+            label.style.paddingTop= 10;
 
             //+ 버튼 생성
             plusButton = new Button(() => ShowMenu()) { text = "+" };
@@ -69,6 +71,7 @@ namespace NodeEditor
             this.AddManipulator(new VisualElementDragger(MouseButton.LeftMouse));
         }
 
+        //더하기 버튼을 누르면 어떤 노드를 새성할 수 있는지 보여주는 메소드
         private void ShowMenu()
         {
             GenericMenu genericMenu = new ();
@@ -82,6 +85,7 @@ namespace NodeEditor
             genericMenu.ShowAsContext();
         }
 
+        //입력받은 타입의 노드를 nodegraphview에 생성하고 성공했다면 팔레트에도 생성하고 인스펙터에 생성한 아이템을 보여주도록
         //일단 테스트 용도로 floatIONode를 화면 중앙에 생성
         private void AddParam(string typename)
         {
@@ -105,9 +109,9 @@ namespace NodeEditor
             }
         }
 
+        //팔레트에 있는 아이템의 상세정보를 inspector를 통해 상세히 보여주도록 하는 메소드
         private void ShowDetail(PaletteItem item)
         {
-            selectItem = item;
             TextField nameField = new("Name") { value = item.MetaData.displayName };
             nameField.RegisterValueChangedCallback(evt =>
             {
@@ -118,6 +122,7 @@ namespace NodeEditor
             inspectorView.Show(item, () => RemoveItem(item));
         }
 
+        //팔레트에 존재하는 아이템을 삭제
         private void RemoveItem(PaletteItem item)
         {
             if(itemToNode.TryGetValue(item, out MyNode node))
@@ -127,6 +132,29 @@ namespace NodeEditor
             }
             listView.Remove(item);
             inspectorView.Show(null, null);
+        }
+
+        //팔레트로 생성된 노드들을 팔레트에 다시 로드하는 코드
+        public void LoadFromGraph()
+        {
+            listView.Clear();
+            itemToNode.Clear();
+
+            foreach(var element in nodeGraphView.graphElements)
+            {
+                if(element is MyNode node)
+                {
+                    var type = node.GetType();
+                    if(NodeFactory.NodeConstructor.TryGetValue(type, out var meta) && meta.isVisiblePalette)
+                    {
+                        PaletteItem item = new(type.Name, meta);
+                        item.UpdateDisplay();
+                        item.RegisterCallback<MouseDownEvent>(_ => ShowDetail(item));
+                        listView.Add(item);
+                        itemToNode[item] = node;
+                    }
+                }
+            }
         }
     }
 }

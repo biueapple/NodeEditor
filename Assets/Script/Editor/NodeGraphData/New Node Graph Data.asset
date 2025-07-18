@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodes:
   - type: FloatIONode
-    guid: 6d59e7b3-71e7-49c4-af4c-9a55a9be6fa6
-    position: {x: 538, y: 138}
+    guid: dbf7f0c7-5fef-4f8b-be41-79ec3581c2a2
+    position: {x: 524, y: 202}
     size: {x: 136, y: 77}
+  - type: FloatONode
+    guid: 5dfc6d9f-576c-468d-ac82-2031a2e72b1c
+    position: {x: 572, y: 319}
+    size: {x: 121, y: 77}
   edges: []

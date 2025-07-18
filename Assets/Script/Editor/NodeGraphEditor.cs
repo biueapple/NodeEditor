@@ -7,6 +7,9 @@ namespace NodeEditor
     public class NodeGraphEditor : EditorWindow
     {
         private NodeGraphView nodeGraphView;
+        private NodeGraphPaletteView paletteView;
+        private NodeInspectorView inspectorView;
+
 
         [SerializeField]
         private NodeGraphData graphData;
@@ -24,6 +27,7 @@ namespace NodeEditor
             window.titleContent = new GUIContent("Node Graph Editor");
             window.graphData = data;
             window.nodeGraphView?.LoadFromAsset(data);
+            window.paletteView?.LoadFromGraph();
         }
 
         public void OnEnable()
@@ -45,6 +49,7 @@ namespace NodeEditor
             ConstructGraphView();
             //자동 로드
             nodeGraphView?.LoadFromAsset(graphData);
+            paletteView?.LoadFromGraph();
         }
 
         //기본적인 배경 만들고 추가
@@ -67,12 +72,12 @@ namespace NodeEditor
             root.Add(nodeGraphView);
 
             //팔레트 아이템 정보를 보여줄 인스펙터
-            NodeInspectorView inspector = new();
-            root.Add(inspector);
+            inspectorView = new();
+            root.Add(inspectorView);
 
             // 팔레트 패널 (Shader Graph 스타일)
-            NodeGraphPaletteView palette = new (nodeGraphView, inspector);
-            root.Add(palette);
+            paletteView = new (nodeGraphView, inspectorView);
+            root.Add(paletteView);
 
             //ui트리 최상단 여기에 등록된 순서로 에디터 창에 그려짐
             rootVisualElement.Add(root);
