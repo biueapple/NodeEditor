@@ -16,8 +16,9 @@ namespace NodeEditor
             input.portName = "Input";
 
             //node 등록과 삭제 관련된 클래스인듯
-            MyEdgeConnector edgeConnector = new ();
-            input.AddManipulator(edgeConnector);
+            //MyEdgeConnector edgeConnector = new ();
+            //input.AddManipulator(edgeConnector);
+            //input.AddManipulator(new EdgeConnector<Edge>(new MyEdgeConnectorListener()));
 
             inputContainer.Add(input);
 
@@ -31,7 +32,7 @@ namespace NodeEditor
 
         public override void Execute()
         {
-            Debug.Log("Excute");
+            Debug.Log("Execute");
         }
     }
 }

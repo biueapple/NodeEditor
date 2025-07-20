@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: New Node Graph Data
   m_EditorClassIdentifier: 
   nodes:
-  - type: FloatIONode
-    guid: dbf7f0c7-5fef-4f8b-be41-79ec3581c2a2
-    position: {x: 524, y: 202}
-    size: {x: 136, y: 77}
   - type: FloatONode
     guid: 498a1886-3141-404d-8822-ad47e7aff254
-    position: {x: 539, y: 335}
+    position: {x: 321, y: 279}
     size: {x: 121, y: 77}
+  - type: FloatIONode
+    guid: dbf7f0c7-5fef-4f8b-be41-79ec3581c2a2
+    position: {x: 515, y: 241}
+    size: {x: 136, y: 77}
   edges: []
