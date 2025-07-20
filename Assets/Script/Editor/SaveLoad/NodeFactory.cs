@@ -9,39 +9,10 @@ namespace NodeEditor
     public static class NodeFactory
     {
         private readonly static Dictionary<Type, NodeMetaData> nodeConstructor = new();
-        //{     노드 자신이 이런 정보들을 정하도록 수정했기에 필요 없어짐
-        //    { typeof(FloatIONode), new NodeMetaData()
-        //        {
-        //            displayName = "FloatIO",
-        //            description = "floatIO 노드",
-        //            category = "Node/FloatIONode",
-        //            icon = null,
-        //            constructor = () => new FloatIONode(),
-        //            size = new Vector2(200, 150),
-        //            isVisiblePalette = false
-        //        }
-        //    },
-        //    {
-        //        typeof(FloatONode), new NodeMetaData()
-        //        {
-        //            displayName = "FloatO",
-        //            description = "floatO 노드",
-        //            category = "Node/FloatONode",
-        //            icon = null,
-        //            constructor = () => new FloatONode(),
-        //            size = new Vector2(200, 150),
-        //            isVisiblePalette = true
-        //        }
-        //    }
-        //};
         //IReadOnlyDictionary는 외부에서 add remove가 불가능하면서 key로 접근은 가능한 c#이 제공해주는 기능
         public static IReadOnlyDictionary<Type, NodeMetaData> NodeConstructor => nodeConstructor;
 
         private readonly static Dictionary<string, Type> nameToType = new();
-        //{
-        //    { "FloatIONode", typeof(FloatIONode) },
-        //    { "FloatONode", typeof(FloatONode) },
-        //};
         public static IReadOnlyDictionary<string, Type> NameToType => nameToType;
 
 

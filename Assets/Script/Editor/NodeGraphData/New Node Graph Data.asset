@@ -15,10 +15,14 @@ MonoBehaviour:
   nodes:
   - type: FloatONode
     guid: 498a1886-3141-404d-8822-ad47e7aff254
-    position: {x: 321, y: 279}
+    position: {x: 408, y: 319}
     size: {x: 121, y: 77}
   - type: FloatIONode
-    guid: dbf7f0c7-5fef-4f8b-be41-79ec3581c2a2
-    position: {x: 515, y: 241}
+    guid: b1fb791c-4bf0-4ce3-a3fc-552ae8b75243
+    position: {x: 571, y: 181}
     size: {x: 136, y: 77}
-  edges: []
+  edges:
+  - outputNodeGUID: 498a1886-3141-404d-8822-ad47e7aff254
+    outputName: Output
+    inputNodeGUID: b1fb791c-4bf0-4ce3-a3fc-552ae8b75243
+    inputName: Input

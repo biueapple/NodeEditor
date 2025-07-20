@@ -15,7 +15,7 @@ namespace NodeEditor
         public Vector2 Position => position;
 
         public List<Port> output = new();
-        public Port input = null;
+        public List<Port> input = new();
 
         public MyNode()
         {

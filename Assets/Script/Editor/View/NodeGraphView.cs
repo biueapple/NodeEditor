@@ -193,8 +193,11 @@ namespace NodeEditor
 
             if(direction == Direction.Input)
             {
-                if (node.input != null && node.input.portName == portName)
-                    return node.input;
+                foreach (var port in node.input)
+                {
+                    if (port != null && port.portName == portName)
+                        return port;
+                }
             }
             else
             {
