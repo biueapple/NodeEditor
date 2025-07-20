@@ -11,11 +11,8 @@ namespace NodeEditor
         {
             title = "IntONode";
 
-            input = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(int));
-            input.name = "input";
-
             output.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(int)));
-            output[0].name = "output";
+            output[0].portName = "output";
             outputContainer.Add(output[0]);
 
             RefreshExpandedState();
