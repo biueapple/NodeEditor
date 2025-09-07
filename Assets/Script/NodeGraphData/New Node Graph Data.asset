@@ -13,14 +13,18 @@ MonoBehaviour:
   m_Name: New Node Graph Data
   m_EditorClassIdentifier: 
   nodes:
-  - type: FloatONode
-    guid: 498a1886-3141-404d-8822-ad47e7aff254
-    position: {x: 408, y: 319}
-    size: {x: 121, y: 77}
   - type: FloatIONode
     guid: b1fb791c-4bf0-4ce3-a3fc-552ae8b75243
-    position: {x: 571, y: 181}
+    position: {x: 603, y: 182}
     size: {x: 136, y: 77}
+  - type: FloatONode
+    guid: 498a1886-3141-404d-8822-ad47e7aff254
+    position: {x: 355, y: 182}
+    size: {x: 121, y: 77}
+  - type: PlusNode
+    guid: ebd1c15b-d7a2-4731-903c-c305551b1971
+    position: {x: 569, y: 346}
+    size: {x: 137, y: 101}
   edges:
   - outputNodeGUID: 498a1886-3141-404d-8822-ad47e7aff254
     outputName: Output

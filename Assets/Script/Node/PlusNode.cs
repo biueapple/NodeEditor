@@ -8,6 +8,8 @@ namespace NodeEditor
     {
         public PlusNode()
         {
+            title = "Plus";
+
             Port port1 = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
             port1.portName = "port1";
             Port port2 = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
